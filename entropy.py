@@ -38,6 +38,13 @@ def relative_entropy(observed_freqs, expected_probs):
 
     return kl_divergence
 
+def kl_divergence(p_dist, q_dist):
+    """Computes Kullback-Leibler divergence from distribution q to p."""
+    p = np.array(list(p_dist.values()), dtype=np.float32)
+    q = np.array([q_dist.get(char, 1e-10) for char in p_dist.keys()], dtype=np.float32)
+    
+    return np.sum(p * np.log2(p / q))
+
 # Test domains
 domains = ["google", "microsoft", "uvg", "uspsxcjmvb", "uspsn-tn-track"]
 
@@ -60,15 +67,20 @@ probabilities = {
 
 for domain in domains:
     freqs = get_char_frequencies(domain)
+    total_chars = sum(freqs.values())
+    
+    # Calculate observed probabilities
+    observed_probs = {char: count / total_chars for char, count in freqs.items()}
+    
     entropy = shannon_entropy(list(domain))  # Pass domain as a list of characters
-    relative_ent = relative_entropy(freqs, probabilities)
+    kl_div = kl_divergence(observed_probs, probabilities)
     
     print(f"Domain: {domain}")
     print(f"  Shannon Entropy: {entropy:.4f}")
-    print(f"  Relative Entropy (KL Divergence): {relative_ent:.4f}")
+    print(f"  Relative Entropy (KL Divergence): {kl_div:.4f}")
     
 
 # Referencias 
 # https://stackoverflow.com/questions/15450192/fastest-way-to-compute-entropy-in-python
 # ChatGPT
-# 
+# https://jamesmccaffrey.wordpress.com/2021/05/28/implementing-kullback-leibler-divergence-from-scratch-using-python/
