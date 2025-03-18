@@ -1,0 +1,7 @@
+myvenv 
+
+.env.local
+gemini_oauth.json
+
+large_eve.json
+top-1m.csv
